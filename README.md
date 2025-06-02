@@ -1,73 +1,56 @@
-# Welcome to your Lovable project
+# 🌱 Groovia - The Eco-Friendly Browser
 
-## Project info
+**Groovia** is a smart, minimalist web browser that helps save the planet — one search at a time. Every time you search with Groovia, you're redirected to eco-conscious engines like **Ecosia**, **OceanHero**, and **GiveWater**, supporting causes such as tree planting, ocean cleanup, and clean water access.
 
-**URL**: https://lovable.dev/projects/c59ea44c-2510-4d7a-a485-489507fcfde6
+> 💡 *Concept by [Chris](#)*  
+> 🛠️ *Coded using [Lovable.AI](https://lovable.ai)*
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🌍 Why Groovia?
 
-**Use Lovable**
+Because the web doesn’t have to cost the Earth.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c59ea44c-2510-4d7a-a485-489507fcfde6) and start prompting.
+Groovia makes it effortless to do good while you browse:
+- 🌳 **Plant Trees** with Ecosia  
+- 💧 **Give Water** through GiveWater  
+- 🌊 **Clean Oceans** with OceanHero  
+- 🔁 All from one seamless, simple interface
 
-Changes made via Lovable will be committed automatically to this repo.
+And the best part?  
+**Why stick to just one eco-browser when you can do more?**  
+Groovia’s **Random Mode** lets you search through any of these platforms at random — making each search a surprise, and each click count in a different way.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- ✨ Minimal UI, eco-optimized
+- 🔀 Random redirect mode across eco-browsers
+- ⚡ Fast, lightweight, privacy-focused
+- 💚 Runs on love for the planet — not just plants
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 💚 Contributing
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Want to make the world greener through code?  
+Fork it, build it, spread it.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 📜 License
 
-**Edit a file directly in GitHub**
+MIT License — use it, share it, improve it.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🙌 Acknowledgements
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Thanks to [Lovable.AI](https://lovable.ai) for AI assistance in development  
+- Concept imagined by **Chris**  
+- Inspired by the mission of platforms like **Ecosia**, **GiveWater**, and **OceanHero**
 
-## What technologies are used for this project?
+---
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/c59ea44c-2510-4d7a-a485-489507fcfde6) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+> “Browsing with impact. That's the Groovia way.”  
