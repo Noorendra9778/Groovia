@@ -1,3 +1,4 @@
+
 export interface SearchEngine {
   id: string;
   name: string;
@@ -7,33 +8,21 @@ export interface SearchEngine {
 
 export const searchEngines: SearchEngine[] = [
   {
-    id: 'oceanhero',
-    name: 'OceanHero',
-    baseUrl: 'https://oceanhero.today/web',
-    searchParam: 'q'
-  },
-  {
     id: 'ecosia',
     name: 'Ecosia',
     baseUrl: 'https://www.ecosia.org/search',
     searchParam: 'q'
   },
   {
+    id: 'oceanhero',
+    name: 'OceanHero',
+    baseUrl: 'https://oceanhero.today/web',
+    searchParam: 'q'
+  },
+  {
     id: 'ekoru',
     name: 'Ekoru',
     baseUrl: 'https://ekoru.org',
-    searchParam: 'q'
-  },
-  {
-    id: 'givewater',
-    name: 'GiveWater',
-    baseUrl: 'https://www.givewater.com/search',
-    searchParam: 'q'
-  },
-  {
-    id: 'lilo',
-    name: 'Lilo',
-    baseUrl: 'https://search.lilo.org/searchweb.php',
     searchParam: 'q'
   }
 ];

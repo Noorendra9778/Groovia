@@ -24,7 +24,7 @@ const Index = () => {
               <Leaf className="h-8 w-8 text-green-600" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-              EcoSearch
+              Groovia
             </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">

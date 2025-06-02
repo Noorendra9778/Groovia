@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TreePine, Waves, Heart, Leaf } from 'lucide-react';
+import { TreePine, Waves, Leaf } from 'lucide-react';
 
 const stats = [
   {
@@ -16,15 +16,9 @@ const stats = [
     color: 'text-blue-600'
   },
   {
-    icon: Heart,
-    title: 'Water Projects',
-    description: 'GiveWater funds clean water access',
-    color: 'text-pink-600'
-  },
-  {
     icon: Leaf,
-    title: 'Social Impact',
-    description: 'Lilo supports environmental causes',
+    title: 'Environmental Impact',
+    description: 'All engines support sustainability',
     color: 'text-emerald-600'
   }
 ];
@@ -35,7 +29,7 @@ const EcoStats = () => {
       <h3 className="text-xl font-semibold text-gray-800 text-center mb-8">
         Your searches make a difference
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => {
           const IconComponent = stat.icon;
           return (
