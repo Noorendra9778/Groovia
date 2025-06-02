@@ -2,7 +2,7 @@
 
 **Groovia** is a smart, minimalist web browser that helps save the planet — one search at a time. Every time you search with Groovia, you're redirected to eco-conscious engines like **Ecosia**, **OceanHero**, and **GiveWater**, supporting causes such as tree planting, ocean cleanup, and clean water access.
 
-> 💡 *Concept by [Chris](#)*  
+> 💡 *Concept by [Chris](https://github.com/llarryyllarryy/Max-Impact-Search/blob/main/README.md)*  
 > 🛠️ *Coded using [Lovable.dev](https://lovable.dev)*  
 > 🔓 *Fully open source and community-powered*
 
