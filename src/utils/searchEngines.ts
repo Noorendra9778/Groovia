@@ -1,4 +1,3 @@
-
 export interface SearchEngine {
   id: string;
   name: string;
@@ -20,28 +19,22 @@ export const searchEngines: SearchEngine[] = [
     searchParam: 'q'
   },
   {
-    id: 'searx',
-    name: 'SearX',
-    baseUrl: 'https://searx.org/search',
+    id: 'ekoru',
+    name: 'Ekoru',
+    baseUrl: 'https://ekoru.org',
     searchParam: 'q'
   },
   {
-    id: 'startpage',
-    name: 'Startpage',
-    baseUrl: 'https://www.startpage.com/sp/search',
-    searchParam: 'query'
-  },
-  {
-    id: 'duckduckgo',
-    name: 'DuckDuckGo',
-    baseUrl: 'https://duckduckgo.com/',
+    id: 'givewater',
+    name: 'GiveWater',
+    baseUrl: 'https://www.givewater.com/search',
     searchParam: 'q'
   },
   {
-    id: 'swisscows',
-    name: 'Swisscows',
-    baseUrl: 'https://swisscows.com/web',
-    searchParam: 'query'
+    id: 'lilo',
+    name: 'Lilo',
+    baseUrl: 'https://search.lilo.org/searchweb.php',
+    searchParam: 'q'
   }
 ];
 

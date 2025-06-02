@@ -12,19 +12,19 @@ const stats = [
   {
     icon: Waves,
     title: 'Ocean Cleanup',
-    description: 'OceanHero removes plastic from oceans',
+    description: 'OceanHero & Ekoru remove plastic from oceans',
     color: 'text-blue-600'
   },
   {
     icon: Heart,
-    title: 'Causes Supported',
-    description: 'YouCare funds environmental projects',
+    title: 'Water Projects',
+    description: 'GiveWater funds clean water access',
     color: 'text-pink-600'
   },
   {
     icon: Leaf,
-    title: 'Carbon Neutral',
-    description: 'All engines prioritize sustainability',
+    title: 'Social Impact',
+    description: 'Lilo supports environmental causes',
     color: 'text-emerald-600'
   }
 ];

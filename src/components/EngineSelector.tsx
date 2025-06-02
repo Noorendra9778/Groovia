@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Globe, Shuffle } from 'lucide-react';
@@ -12,10 +11,9 @@ const engines = [
   { id: 'random', name: 'Random Engine', icon: Shuffle, description: 'Surprise me!' },
   { id: 'oceanhero', name: 'OceanHero', icon: Globe, description: 'Removes plastic from oceans' },
   { id: 'ecosia', name: 'Ecosia', icon: Globe, description: 'Plants trees with your searches' },
-  { id: 'searx', name: 'SearX', icon: Globe, description: 'Open source metasearch engine' },
-  { id: 'startpage', name: 'Startpage', icon: Globe, description: 'Privacy-focused search' },
-  { id: 'duckduckgo', name: 'DuckDuckGo', icon: Globe, description: 'Privacy that simplified' },
-  { id: 'swisscows', name: 'Swisscows', icon: Globe, description: 'Family-friendly search' },
+  { id: 'ekoru', name: 'Ekoru', icon: Globe, description: 'Cleans oceans and plants trees' },
+  { id: 'givewater', name: 'GiveWater', icon: Globe, description: 'Provides clean water access' },
+  { id: 'lilo', name: 'Lilo', icon: Globe, description: 'Funds social & environmental projects' },
 ];
 
 const EngineSelector = ({ selectedEngine, onEngineChange }: EngineSelectorProps) => {
