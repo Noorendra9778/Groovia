@@ -10,12 +10,12 @@ interface EngineSelectorProps {
 
 const engines = [
   { id: 'random', name: 'Random Engine', icon: Shuffle, description: 'Surprise me!' },
-  { id: 'ecosia', name: 'Ecosia', icon: Globe, description: 'Plants trees with your searches' },
-  { id: 'rapusia', name: 'Rapusia', icon: Globe, description: 'Privacy-focused green search' },
   { id: 'oceanhero', name: 'OceanHero', icon: Globe, description: 'Removes plastic from oceans' },
-  { id: 'ekoru', name: 'Ekoru', icon: Globe, description: 'Cleans oceans and plants trees' },
-  { id: 'youcare', name: 'YouCare.World', icon: Globe, description: 'Supports environmental causes' },
-  { id: 'gexi', name: 'Gexi', icon: Globe, description: 'Sustainable search solutions' },
+  { id: 'ecosia', name: 'Ecosia', icon: Globe, description: 'Plants trees with your searches' },
+  { id: 'searx', name: 'SearX', icon: Globe, description: 'Open source metasearch engine' },
+  { id: 'startpage', name: 'Startpage', icon: Globe, description: 'Privacy-focused search' },
+  { id: 'duckduckgo', name: 'DuckDuckGo', icon: Globe, description: 'Privacy that simplified' },
+  { id: 'swisscows', name: 'Swisscows', icon: Globe, description: 'Family-friendly search' },
 ];
 
 const EngineSelector = ({ selectedEngine, onEngineChange }: EngineSelectorProps) => {

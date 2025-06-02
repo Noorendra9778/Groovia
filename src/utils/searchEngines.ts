@@ -8,40 +8,40 @@ export interface SearchEngine {
 
 export const searchEngines: SearchEngine[] = [
   {
+    id: 'oceanhero',
+    name: 'OceanHero',
+    baseUrl: 'https://oceanhero.today/web',
+    searchParam: 'q'
+  },
+  {
     id: 'ecosia',
     name: 'Ecosia',
     baseUrl: 'https://www.ecosia.org/search',
     searchParam: 'q'
   },
   {
-    id: 'rapusia',
-    name: 'Rapusia',
-    baseUrl: 'https://rapusia.org/search',
+    id: 'searx',
+    name: 'SearX',
+    baseUrl: 'https://searx.org/search',
     searchParam: 'q'
   },
   {
-    id: 'oceanhero',
-    name: 'OceanHero',
-    baseUrl: 'https://oceanhero.today/search',
+    id: 'startpage',
+    name: 'Startpage',
+    baseUrl: 'https://www.startpage.com/sp/search',
+    searchParam: 'query'
+  },
+  {
+    id: 'duckduckgo',
+    name: 'DuckDuckGo',
+    baseUrl: 'https://duckduckgo.com/',
     searchParam: 'q'
   },
   {
-    id: 'ekoru',
-    name: 'Ekoru',
-    baseUrl: 'https://ekoru.org/search',
-    searchParam: 'q'
-  },
-  {
-    id: 'youcare',
-    name: 'YouCare.World',
-    baseUrl: 'https://youcare.world/search',
-    searchParam: 'q'
-  },
-  {
-    id: 'gexi',
-    name: 'Gexi',
-    baseUrl: 'https://gexi.org/search',
-    searchParam: 'q'
+    id: 'swisscows',
+    name: 'Swisscows',
+    baseUrl: 'https://swisscows.com/web',
+    searchParam: 'query'
   }
 ];
 
