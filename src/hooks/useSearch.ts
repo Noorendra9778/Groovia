@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast';
 
 export const useSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [browserUrl, setBrowserUrl] = useState<string | null>(null);
 
   const performSearch = async (query: string, selectedEngine: string) => {
     if (!query.trim()) {
@@ -24,7 +25,7 @@ export const useSearch = () => {
       if (selectedEngine === 'random') {
         engine = getRandomEngine();
         toast({
-          title: `Redirecting to ${engine.name}`,
+          title: `Searching with ${engine.name}`,
           description: "Randomly selected for your eco-friendly search!",
         });
       } else {
@@ -38,7 +39,7 @@ export const useSearch = () => {
       
       // Small delay for better UX
       setTimeout(() => {
-        window.open(searchUrl, '_blank');
+        setBrowserUrl(searchUrl);
         setIsLoading(false);
       }, 800);
 
@@ -53,5 +54,9 @@ export const useSearch = () => {
     }
   };
 
-  return { performSearch, isLoading };
+  const closeBrowser = () => {
+    setBrowserUrl(null);
+  };
+
+  return { performSearch, isLoading, browserUrl, closeBrowser };
 };

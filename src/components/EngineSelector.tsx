@@ -19,19 +19,23 @@ const EngineSelector = ({ selectedEngine, onEngineChange }: EngineSelectorProps)
   return (
     <div className="w-full max-w-md mx-auto mb-6">
       <Select value={selectedEngine} onValueChange={onEngineChange}>
-        <SelectTrigger className="w-full bg-white border-green-200 hover:border-green-300 focus:ring-green-300">
+        <SelectTrigger className="w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-600 focus:ring-green-300 dark:focus:ring-green-600 transition-all duration-300 hover:scale-[1.02]">
           <SelectValue placeholder="Choose your eco-search engine" />
         </SelectTrigger>
-        <SelectContent className="bg-white border-green-200">
+        <SelectContent className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-green-200 dark:border-green-800">
           {engines.map((engine) => {
             const IconComponent = engine.icon;
             return (
-              <SelectItem key={engine.id} value={engine.id} className="hover:bg-green-50">
+              <SelectItem 
+                key={engine.id} 
+                value={engine.id} 
+                className="hover:bg-green-50 dark:hover:bg-green-900/30 transition-all duration-200 hover:scale-[1.02]"
+              >
                 <div className="flex items-center gap-3">
-                  <IconComponent className="h-4 w-4 text-green-600" />
+                  <IconComponent className="h-4 w-4 text-green-600 dark:text-green-400" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-gray-900">{engine.name}</span>
-                    <span className="text-xs text-green-600">{engine.description}</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{engine.name}</span>
+                    <span className="text-xs text-green-600 dark:text-green-400">{engine.description}</span>
                   </div>
                 </div>
               </SelectItem>
