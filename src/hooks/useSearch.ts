@@ -37,6 +37,12 @@ export const useSearch = () => {
 
       const searchUrl = buildSearchUrl(engine, query);
       
+      // Provide user feedback about in-app browsing
+      toast({
+        title: "Opening search results",
+        description: "If the page doesn't load, you can open it in your browser.",
+      });
+
       // Small delay for better UX
       setTimeout(() => {
         setBrowserUrl(searchUrl);
