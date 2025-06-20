@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, RotateCcw, X, Home, ExternalLink, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { fetchProxiedContent } from '../utils/proxyService';
 
 interface BrowserProps {
   url: string;
@@ -13,20 +14,39 @@ const Browser = ({ url, onClose }: BrowserProps) => {
   const [currentUrl, setCurrentUrl] = useState(url);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [useProxy, setUseProxy] = useState(false);
+  const [proxiedContent, setProxiedContent] = useState<string>('');
 
   useEffect(() => {
     setCurrentUrl(url);
     setIsLoading(true);
     setHasError(false);
+    setUseProxy(false);
+    setProxiedContent('');
   }, [url]);
 
   const handleIframeLoad = () => {
     setIsLoading(false);
   };
 
-  const handleIframeError = () => {
-    setIsLoading(false);
-    setHasError(true);
+  const handleIframeError = async () => {
+    console.log('Iframe failed to load, trying proxy...');
+    setIsLoading(true);
+    
+    try {
+      const content = await fetchProxiedContent(currentUrl);
+      setProxiedContent(content);
+      setUseProxy(true);
+      setIsLoading(false);
+      toast({
+        title: "Loaded via proxy",
+        description: "Content loaded using proxy service due to site restrictions.",
+      });
+    } catch (error) {
+      console.error('Proxy also failed:', error);
+      setIsLoading(false);
+      setHasError(true);
+    }
   };
 
   const openInNewTab = () => {
@@ -40,10 +60,17 @@ const Browser = ({ url, onClose }: BrowserProps) => {
   const refreshPage = () => {
     setIsLoading(true);
     setHasError(false);
-    // Force iframe refresh by changing the key
-    const iframe = document.querySelector('iframe');
-    if (iframe) {
-      iframe.src = iframe.src;
+    setUseProxy(false);
+    setProxiedContent('');
+    
+    if (useProxy) {
+      handleIframeError();
+    } else {
+      // Force iframe refresh by changing the key
+      const iframe = document.querySelector('iframe');
+      if (iframe) {
+        iframe.src = iframe.src;
+      }
     }
   };
 
@@ -81,7 +108,7 @@ const Browser = ({ url, onClose }: BrowserProps) => {
           
           <div className="flex-1 mx-2">
             <div className="bg-muted/30 rounded-full px-4 py-2 text-sm text-muted-foreground truncate border">
-              {currentUrl}
+              {currentUrl} {useProxy && "(via proxy)"}
             </div>
           </div>
 
@@ -150,6 +177,13 @@ const Browser = ({ url, onClose }: BrowserProps) => {
                   Back to Home
                 </Button>
               </div>
+            </div>
+          ) : useProxy ? (
+            <div className="w-full h-full overflow-auto">
+              <div
+                className="min-h-full bg-white"
+                dangerouslySetInnerHTML={{ __html: proxiedContent }}
+              />
             </div>
           ) : (
             <iframe
