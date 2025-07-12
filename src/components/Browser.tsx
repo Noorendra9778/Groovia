@@ -1,9 +1,11 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, ArrowRight, RotateCcw, X, Home, ExternalLink, AlertTriangle, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { fetchProxiedContent } from '../utils/proxyService';
+import { useBrowserHistory } from '@/hooks/useBrowserHistory';
+import { useBrowserTabs } from '@/hooks/useBrowserTabs';
+import { BrowserTabs } from './BrowserTabs';
+import { BrowserNavigation } from './BrowserNavigation';
+import { BrowserContent } from './BrowserContent';
 
 interface BrowserProps {
   url: string;
@@ -11,35 +13,44 @@ interface BrowserProps {
 }
 
 const Browser = ({ url, onClose }: BrowserProps) => {
-  const [currentUrl, setCurrentUrl] = useState(url);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [useProxy, setUseProxy] = useState(false);
   const [proxiedContent, setProxiedContent] = useState<string>('');
   const [iframeKey, setIframeKey] = useState(0);
-  const [history, setHistory] = useState<string[]>([url]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [tabs, setTabs] = useState<Array<{id: string, url: string, title: string}>>([
-    { id: '1', url, title: new URL(url).hostname }
-  ]);
-  const [activeTabId, setActiveTabId] = useState('1');
+
+  const { 
+    currentUrl, 
+    navigateToUrl, 
+    goBack, 
+    goForward, 
+    canGoBack, 
+    canGoForward 
+  } = useBrowserHistory(url);
+
+  const { 
+    tabs, 
+    activeTabId, 
+    addTab, 
+    closeTab, 
+    switchTab 
+  } = useBrowserTabs(url);
 
   useEffect(() => {
-    setCurrentUrl(url);
     setIsLoading(true);
     setHasError(false);
     setUseProxy(false);
     setProxiedContent('');
     setIframeKey(prev => prev + 1);
-  }, [url]);
+  }, [currentUrl]);
 
-  const handleIframeLoad = () => {
+  const handleIframeLoad = useCallback(() => {
     console.log('Iframe loaded successfully');
     setIsLoading(false);
     setHasError(false);
-  };
+  }, []);
 
-  const handleIframeError = async () => {
+  const handleIframeError = useCallback(async () => {
     console.log('Iframe failed to load, trying proxy...');
     setIsLoading(true);
     
@@ -63,54 +74,15 @@ const Browser = ({ url, onClose }: BrowserProps) => {
         variant: "destructive"
       });
     }
-  };
+  }, [currentUrl]);
 
-  const openInNewTab = () => {
+  const openInNewTab = useCallback(() => {
     window.open(currentUrl, '_blank', 'noopener,noreferrer');
     toast({
       title: "Opened in new tab",
       description: "The search has been opened in a new browser tab.",
     });
-  };
-
-  const navigateToUrl = useCallback((newUrl: string) => {
-    const newHistory = history.slice(0, currentIndex + 1);
-    newHistory.push(newUrl);
-    setHistory(newHistory);
-    setCurrentIndex(newHistory.length - 1);
-    setCurrentUrl(newUrl);
-    setIsLoading(true);
-    setHasError(false);
-    setUseProxy(false);
-    setProxiedContent('');
-    setIframeKey(prev => prev + 1);
-  }, [history, currentIndex]);
-
-  const goBack = useCallback(() => {
-    if (currentIndex > 0) {
-      const newIndex = currentIndex - 1;
-      setCurrentIndex(newIndex);
-      setCurrentUrl(history[newIndex]);
-      setIsLoading(true);
-      setHasError(false);
-      setUseProxy(false);
-      setProxiedContent('');
-      setIframeKey(prev => prev + 1);
-    }
-  }, [currentIndex, history]);
-
-  const goForward = useCallback(() => {
-    if (currentIndex < history.length - 1) {
-      const newIndex = currentIndex + 1;
-      setCurrentIndex(newIndex);
-      setCurrentUrl(history[newIndex]);
-      setIsLoading(true);
-      setHasError(false);
-      setUseProxy(false);
-      setProxiedContent('');
-      setIframeKey(prev => prev + 1);
-    }
-  }, [currentIndex, history]);
+  }, [currentUrl]);
 
   const refreshPage = useCallback(() => {
     setIsLoading(true);
@@ -123,44 +95,66 @@ const Browser = ({ url, onClose }: BrowserProps) => {
     } else {
       setIframeKey(prev => prev + 1);
     }
-  }, [useProxy]);
+  }, [useProxy, handleIframeError]);
 
-  const addTab = useCallback(() => {
-    const newTabId = Date.now().toString();
-    const newTab = { 
-      id: newTabId, 
-      url: 'https://www.google.com', 
-      title: 'New Tab' 
-    };
-    setTabs(prev => [...prev, newTab]);
-    setActiveTabId(newTabId);
-    navigateToUrl(newTab.url);
+  const handleNavigation = useCallback((newUrl: string) => {
+    const url = navigateToUrl(newUrl);
+    setIsLoading(true);
+    setHasError(false);
+    setUseProxy(false);
+    setProxiedContent('');
+    setIframeKey(prev => prev + 1);
+    return url;
   }, [navigateToUrl]);
 
-  const closeTab = useCallback((tabId: string) => {
-    const newTabs = tabs.filter(tab => tab.id !== tabId);
-    if (newTabs.length === 0) {
+  const handleGoBack = useCallback(() => {
+    const url = goBack();
+    if (url) {
+      setIsLoading(true);
+      setHasError(false);
+      setUseProxy(false);
+      setProxiedContent('');
+      setIframeKey(prev => prev + 1);
+    }
+  }, [goBack]);
+
+  const handleGoForward = useCallback(() => {
+    const url = goForward();
+    if (url) {
+      setIsLoading(true);
+      setHasError(false);
+      setUseProxy(false);
+      setProxiedContent('');
+      setIframeKey(prev => prev + 1);
+    }
+  }, [goForward]);
+
+  const handleGoHome = useCallback(() => {
+    handleNavigation('https://www.google.com');
+  }, [handleNavigation]);
+
+  const handleAddTab = useCallback(() => {
+    const newTab = addTab();
+    if (newTab) {
+      handleNavigation(newTab.url);
+    }
+  }, [addTab, handleNavigation]);
+
+  const handleCloseTab = useCallback((tabId: string) => {
+    const remainingTab = closeTab(tabId);
+    if (remainingTab) {
+      handleNavigation(remainingTab.url);
+    } else {
       onClose();
-      return;
     }
-    setTabs(newTabs);
-    if (activeTabId === tabId) {
-      setActiveTabId(newTabs[0].id);
-      navigateToUrl(newTabs[0].url);
-    }
-  }, [tabs, activeTabId, onClose, navigateToUrl]);
+  }, [closeTab, handleNavigation, onClose]);
 
-  const switchTab = useCallback((tabId: string) => {
-    const tab = tabs.find(t => t.id === tabId);
+  const handleSwitchTab = useCallback((tabId: string) => {
+    const tab = switchTab(tabId);
     if (tab) {
-      setActiveTabId(tabId);
-      navigateToUrl(tab.url);
+      handleNavigation(tab.url);
     }
-  }, [tabs, navigateToUrl]);
-
-  const goHome = useCallback(() => {
-    navigateToUrl('https://www.google.com');
-  }, [navigateToUrl]);
+  }, [switchTab, handleNavigation]);
 
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-fade-in">
@@ -182,180 +176,41 @@ const Browser = ({ url, onClose }: BrowserProps) => {
       </div>
 
       <div className="relative flex flex-col h-full">
-        {/* Tab Bar */}
-        <div className="flex items-center bg-muted/20 border-b border-cyan-500/10 overflow-x-auto">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={`flex items-center min-w-0 max-w-48 cursor-pointer transition-all duration-200 ${
-                activeTabId === tab.id 
-                  ? 'bg-card/80 border-b-2 border-cyan-400 shadow-neon-cyan' 
-                  : 'bg-muted/10 hover:bg-muted/30'
-              }`}
-              onClick={() => switchTab(tab.id)}
-            >
-              <div className="flex-1 px-3 py-2 text-sm truncate">
-                {tab.title}
-              </div>
-              {tabs.length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 mr-1 hover:bg-red-500/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
-            </div>
-          ))}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 ml-2 hover:bg-emerald-500/10 hover:shadow-neon-emerald shrink-0"
-            onClick={addTab}
-            title="Add new tab"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
+        <BrowserTabs
+          tabs={tabs}
+          activeTabId={activeTabId}
+          onTabSwitch={handleSwitchTab}
+          onTabClose={handleCloseTab}
+          onAddTab={handleAddTab}
+        />
 
-        {/* Browser Header with Neon Effect */}
-        <div className="flex items-center gap-2 p-3 border-b bg-card/80 backdrop-blur-md shadow-lg border-cyan-500/20">
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-cyan-500/10 hover:shadow-neon-cyan"
-              disabled={currentIndex === 0}
-              onClick={goBack}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-cyan-500/10 hover:shadow-neon-cyan"
-              disabled={currentIndex === history.length - 1}
-              onClick={goForward}
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-emerald-500/10 hover:shadow-neon-emerald"
-              onClick={refreshPage}
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <div className="flex-1 mx-2">
-            <div className="bg-muted/30 rounded-full px-4 py-2 text-sm text-muted-foreground truncate border border-cyan-500/20 shadow-inner backdrop-blur-sm">
-              {currentUrl} {useProxy && <span className="text-emerald-400">(via proxy)</span>}
-            </div>
-          </div>
+        <BrowserNavigation
+          currentUrl={currentUrl}
+          useProxy={useProxy}
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          onGoBack={handleGoBack}
+          onGoForward={handleGoForward}
+          onRefresh={refreshPage}
+          onGoHome={handleGoHome}
+          onOpenInNewTab={openInNewTab}
+          onClose={onClose}
+        />
 
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-blue-500/10 hover:shadow-neon-blue"
-              onClick={openInNewTab}
-              title="Open in new tab"
-            >
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-green-500/10 hover:shadow-neon-green"
-              onClick={goHome}
-              title="Go to home"
-            >
-              <Home className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-red-500/10 hover:shadow-neon-red"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Animated Loading Bar */}
-        {isLoading && (
-          <div className="h-1 bg-muted/30 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-emerald-500 to-blue-500 animate-shimmer bg-[length:200%_100%]" />
-          </div>
-        )}
-
-        {/* Browser Content */}
         <div className="flex-1 relative">
-          {hasError ? (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-fade-in">
-              <div className="p-6 bg-gradient-to-br from-yellow-100/80 to-orange-100/80 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl mb-6 backdrop-blur-sm border border-yellow-400/20 shadow-neon-yellow">
-                <AlertTriangle className="h-12 w-12 text-yellow-600 dark:text-yellow-400 animate-pulse" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">
-                Cannot display this page
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md leading-relaxed">
-                This website cannot be displayed within the app due to security restrictions. 
-                You can open it in your device's browser instead.
-              </p>
-              <div className="flex gap-4 flex-wrap justify-center">
-                <Button 
-                  onClick={openInNewTab} 
-                  className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white shadow-neon-emerald hover:shadow-neon-emerald-lg transition-all duration-300 transform hover:scale-105"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open in Browser
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={refreshPage}
-                  className="border-cyan-400/30 hover:bg-cyan-500/10 hover:border-cyan-400/50 transition-all duration-300 transform hover:scale-105"
-                >
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Try Again
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={onClose}
-                  className="border-emerald-400/30 hover:bg-emerald-500/10 hover:border-emerald-400/50 transition-all duration-300 transform hover:scale-105"
-                >
-                  <Home className="h-4 w-4 mr-2" />
-                  Back to Home
-                </Button>
-              </div>
-            </div>
-          ) : useProxy ? (
-            <div className="w-full h-full overflow-auto backdrop-blur-sm">
-              <div
-                className="min-h-full bg-white/95 backdrop-blur-sm border border-cyan-500/10"
-                dangerouslySetInnerHTML={{ __html: proxiedContent }}
-              />
-            </div>
-          ) : (
-            <iframe
-              key={iframeKey}
-              src={currentUrl}
-              className="w-full h-full border-0 backdrop-blur-sm"
-              onLoad={handleIframeLoad}
-              onError={handleIframeError}
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-navigation"
-              title="Browser"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          )}
+          <BrowserContent
+            currentUrl={currentUrl}
+            isLoading={isLoading}
+            hasError={hasError}
+            useProxy={useProxy}
+            proxiedContent={proxiedContent}
+            iframeKey={iframeKey}
+            onIframeLoad={handleIframeLoad}
+            onIframeError={handleIframeError}
+            onOpenInNewTab={openInNewTab}
+            onRefresh={refreshPage}
+            onClose={onClose}
+          />
         </div>
       </div>
     </div>
