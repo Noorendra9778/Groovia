@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, RotateCcw, X, Home, ExternalLink, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowLeft, ArrowRight, RotateCcw, X, Home, ExternalLink, AlertTriangle, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { fetchProxiedContent } from '../utils/proxyService';
@@ -17,6 +17,12 @@ const Browser = ({ url, onClose }: BrowserProps) => {
   const [useProxy, setUseProxy] = useState(false);
   const [proxiedContent, setProxiedContent] = useState<string>('');
   const [iframeKey, setIframeKey] = useState(0);
+  const [history, setHistory] = useState<string[]>([url]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [tabs, setTabs] = useState<Array<{id: string, url: string, title: string}>>([
+    { id: '1', url, title: new URL(url).hostname }
+  ]);
+  const [activeTabId, setActiveTabId] = useState('1');
 
   useEffect(() => {
     setCurrentUrl(url);
@@ -67,7 +73,46 @@ const Browser = ({ url, onClose }: BrowserProps) => {
     });
   };
 
-  const refreshPage = () => {
+  const navigateToUrl = useCallback((newUrl: string) => {
+    const newHistory = history.slice(0, currentIndex + 1);
+    newHistory.push(newUrl);
+    setHistory(newHistory);
+    setCurrentIndex(newHistory.length - 1);
+    setCurrentUrl(newUrl);
+    setIsLoading(true);
+    setHasError(false);
+    setUseProxy(false);
+    setProxiedContent('');
+    setIframeKey(prev => prev + 1);
+  }, [history, currentIndex]);
+
+  const goBack = useCallback(() => {
+    if (currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      setCurrentIndex(newIndex);
+      setCurrentUrl(history[newIndex]);
+      setIsLoading(true);
+      setHasError(false);
+      setUseProxy(false);
+      setProxiedContent('');
+      setIframeKey(prev => prev + 1);
+    }
+  }, [currentIndex, history]);
+
+  const goForward = useCallback(() => {
+    if (currentIndex < history.length - 1) {
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
+      setCurrentUrl(history[newIndex]);
+      setIsLoading(true);
+      setHasError(false);
+      setUseProxy(false);
+      setProxiedContent('');
+      setIframeKey(prev => prev + 1);
+    }
+  }, [currentIndex, history]);
+
+  const refreshPage = useCallback(() => {
     setIsLoading(true);
     setHasError(false);
     setUseProxy(false);
@@ -78,7 +123,44 @@ const Browser = ({ url, onClose }: BrowserProps) => {
     } else {
       setIframeKey(prev => prev + 1);
     }
-  };
+  }, [useProxy]);
+
+  const addTab = useCallback(() => {
+    const newTabId = Date.now().toString();
+    const newTab = { 
+      id: newTabId, 
+      url: 'https://www.google.com', 
+      title: 'New Tab' 
+    };
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTabId);
+    navigateToUrl(newTab.url);
+  }, [navigateToUrl]);
+
+  const closeTab = useCallback((tabId: string) => {
+    const newTabs = tabs.filter(tab => tab.id !== tabId);
+    if (newTabs.length === 0) {
+      onClose();
+      return;
+    }
+    setTabs(newTabs);
+    if (activeTabId === tabId) {
+      setActiveTabId(newTabs[0].id);
+      navigateToUrl(newTabs[0].url);
+    }
+  }, [tabs, activeTabId, onClose, navigateToUrl]);
+
+  const switchTab = useCallback((tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId);
+    if (tab) {
+      setActiveTabId(tabId);
+      navigateToUrl(tab.url);
+    }
+  }, [tabs, navigateToUrl]);
+
+  const goHome = useCallback(() => {
+    navigateToUrl('https://www.google.com');
+  }, [navigateToUrl]);
 
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-fade-in">
@@ -100,6 +182,47 @@ const Browser = ({ url, onClose }: BrowserProps) => {
       </div>
 
       <div className="relative flex flex-col h-full">
+        {/* Tab Bar */}
+        <div className="flex items-center bg-muted/20 border-b border-cyan-500/10 overflow-x-auto">
+          {tabs.map((tab) => (
+            <div
+              key={tab.id}
+              className={`flex items-center min-w-0 max-w-48 cursor-pointer transition-all duration-200 ${
+                activeTabId === tab.id 
+                  ? 'bg-card/80 border-b-2 border-cyan-400 shadow-neon-cyan' 
+                  : 'bg-muted/10 hover:bg-muted/30'
+              }`}
+              onClick={() => switchTab(tab.id)}
+            >
+              <div className="flex-1 px-3 py-2 text-sm truncate">
+                {tab.title}
+              </div>
+              {tabs.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 mr-1 hover:bg-red-500/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                  }}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 ml-2 hover:bg-emerald-500/10 hover:shadow-neon-emerald shrink-0"
+            onClick={addTab}
+            title="Add new tab"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+
         {/* Browser Header with Neon Effect */}
         <div className="flex items-center gap-2 p-3 border-b bg-card/80 backdrop-blur-md shadow-lg border-cyan-500/20">
           <div className="flex items-center gap-1">
@@ -107,7 +230,8 @@ const Browser = ({ url, onClose }: BrowserProps) => {
               variant="ghost"
               size="icon"
               className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-cyan-500/10 hover:shadow-neon-cyan"
-              disabled
+              disabled={currentIndex === 0}
+              onClick={goBack}
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -115,7 +239,8 @@ const Browser = ({ url, onClose }: BrowserProps) => {
               variant="ghost"
               size="icon"
               className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-cyan-500/10 hover:shadow-neon-cyan"
-              disabled
+              disabled={currentIndex === history.length - 1}
+              onClick={goForward}
             >
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -149,8 +274,8 @@ const Browser = ({ url, onClose }: BrowserProps) => {
               variant="ghost"
               size="icon"
               className="h-8 w-8 hover:scale-105 transition-all duration-300 hover:bg-green-500/10 hover:shadow-neon-green"
-              onClick={onClose}
-              title="Back to home"
+              onClick={goHome}
+              title="Go to home"
             >
               <Home className="h-4 w-4" />
             </Button>
